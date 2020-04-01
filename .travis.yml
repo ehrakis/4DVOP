@@ -1,0 +1,28 @@
+language: node_js
+node_js:
+        - "9"
+sudo: required
+
+services:
+        - docker
+
+before_install:
+        - echo 'Ceci est un test'
+        - wget -q0- https://tollbelt.heroku.com/install.sh | sh
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - echo "$HEROKU_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin registry.heroku.com
+
+script:
+        - docker build -t supinfo/modered:latest ./nodered/
+        - docker tag supinfo/nodered registry.heroku.com/$HEROKU_APP_NAME/web
+
+
+deploy:
+        provider: script
+        script:
+                docker push supinfo/nodered;
+                docker push registry.heroku.com/$HEROKU_APP_NAME/web;
+                heroku container:release web -app $HEROKU_APP_NAME
+        on:
+                branch: master
+
