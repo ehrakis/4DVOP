@@ -1,0 +1,15 @@
+version: "3.7"
+
+services:
+  backend:
+    build:
+      context: ./nodered
+      dockerfile: ./Dockerfile
+    image: "supinfo/nodered:0.1.0"
+    ports:
+      - "1880:1880"
+    networks:
+      - supinfo-net
+
+networks:
+  supinfo-net:
